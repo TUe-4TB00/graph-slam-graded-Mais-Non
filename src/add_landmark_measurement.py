@@ -9,7 +9,11 @@ MEASUREMENT_NOISE = gtsam.noiseModel.Diagonal.Sigmas(np.array([0.05, 0.1]))  # (
 
 def add_landmark_measurement(graph, initial_estimate, result):
     # Determine the correct rotation (bearing) and distance from X(4) to L(2) 
-    # rotation = 
-    # distance = 
+    x = result.atPose2(X(4))
+    l = result.atPoint2(L(2))
+    xx, xy, xt = x.x(), x.y(), x.theta()
+    lx,ly = l[0], l[1]
+    rotation = (np.arctan((xy-ly)/(xx-lx))+xt)*180/np.pi
+    distance = np.sqrt((xx-lx)**2+(xy-ly)**2)
     graph.add(gtsam.BearingRangeFactor2D(X(4), L(2), gtsam.Rot2.fromDegrees(rotation), distance, MEASUREMENT_NOISE))
     return graph
